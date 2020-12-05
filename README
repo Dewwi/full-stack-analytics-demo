@@ -1,0 +1,8 @@
+## MELTANO :
+https://gitlab.com/meltano/files-docker-compose/-/blob/master/bundle/docker-compose.prod.yml
+
+## GOOGLE PLAY API :
+https://github.com/facundoolano/google-play-api
+
+## ADD TAP TO MELTANO:
+- meltano add --custom extractor tap-google-play

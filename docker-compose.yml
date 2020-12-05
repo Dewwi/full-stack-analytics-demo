@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  db:
+      image: postgres
+      container_name: aso_scraping_postgres
+      volumes:
+        - /Users/david/var/postgresql:/var/lib/postgresql
+      ports:
+        - "5439:5439"
+      expose:
+        - 5439
+      networks:
+        - meltano
+      environment:
+        POSTGRES_USER: pguser
+        POSTGRES_PASSWORD: pguser
+        POSTGRES_DB: pgdb
+  play_scraping_api:
+      build:
+        context: .
+        dockerfile: ./play-scraping-api-Dockerfile
+      ports:
+        - "80:3000"
+      networks:
+        - meltano
+  meltano-ui:
+    build:
+        context: ./meltano
+    command: ui
+    environment:
+      MELTANO_DATABASE_URI: postgresql://postgres:postgres@meltano-system-db/meltano
+      MELTANO_SEND_ANONYMOUS_USAGE_STATS: "false"
+      MELTANO_DISABLE_TRACKING: "false"
+      MELTANO_PROJECT_READONLY: "false"
+    volumes:
+      - ./meltano:/project
+    expose:
+      - 5000
+    ports:
+      - 5000:5000
+    depends_on:
+      - meltano-system-db
+    networks:
+      - meltano
+    restart: unless-stopped
+  meltano-system-db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres # CHANGE ME
+      POSTGRES_DB: meltano
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - meltano_postgresql_data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    networks:
+      - meltano
+    restart: unless-stopped
+
+networks:
+  meltano:
+
+volumes:
+  meltano_postgresql_data:
+    driver: local
+  meltano_elt_logs_data:
+    driver: local
