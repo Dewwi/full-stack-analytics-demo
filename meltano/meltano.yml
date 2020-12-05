@@ -5,7 +5,7 @@ plugins:
   extractors:
   - name: tap-google-play
     namespace: tap_google_play
-    pip_url: -e ../tap-google-play
+    pip_url: git+https://github.com/Dewwi/tap-google-play.git
     executable: tap-google-play
     capabilities:
     - catalog

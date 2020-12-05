@@ -1,13 +1,13 @@
 version: '3'
 
 services:
-  db:
+  analytics_db:
       image: postgres
-      container_name: aso_scraping_postgres
+      container_name: meltano_analytics_postgres
       volumes:
         - /Users/david/var/postgresql:/var/lib/postgresql
       ports:
-        - "5439:5439"
+        - "5439:5432"
       expose:
         - 5439
       networks:
@@ -16,15 +16,19 @@ services:
         POSTGRES_USER: pguser
         POSTGRES_PASSWORD: pguser
         POSTGRES_DB: pgdb
-  play_scraping_api:
+  google_play_api:
+      container_name: google_play_api
       build:
         context: .
-        dockerfile: ./play-scraping-api-Dockerfile
+        dockerfile: ./google-play-api/Dockerfile
       ports:
         - "80:3000"
+      expose:
+        - 80
       networks:
         - meltano
   meltano-ui:
+    container_name: meltano_ui
     build:
         context: ./meltano
     command: ui
@@ -46,8 +50,9 @@ services:
     restart: unless-stopped
   meltano-system-db:
     image: postgres
+    container_name: meltano_system_postgres
     environment:
-      POSTGRES_PASSWORD: postgres # CHANGE ME
+      POSTGRES_PASSWORD: postgres 
       POSTGRES_DB: meltano
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
