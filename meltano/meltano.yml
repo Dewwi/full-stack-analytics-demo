@@ -4,7 +4,7 @@ project_id: 0570cff1-64fe-4d47-b950-c75906e7d2ad
 plugins:
   extractors:
   - name: tap-google-play
-    namespace: tap_google_play
+    namespace: tap-google-play
     pip_url: git+https://github.com/Dewwi/tap-google-play.git
     executable: tap-google-play
     capabilities:
@@ -15,12 +15,24 @@ plugins:
     - name: country_code
     - name: categories_to_scrape
     - name: collections_to_scrape
+    config:
+      api_host: google_play_api:3000
+      categories_to_scrape: '1'
+      collections_to_scrape: '1'
+      country_code: '["uk"]'
   loaders:
   - name: target-postgres
     variant: datamill-co
     pip_url: singer-target-postgres
     config:
-      postgres_database: meltano
-      postgres_port: 5439
+      postgres_database: pgdb
       postgres_schema: meltano_extract_load
       postgres_username: pguser
+      postgres_host: analytics_db
+schedules:
+- name: google-play-to-postgres
+  extractor: tap-google-play
+  loader: target-postgres
+  transform: skip
+  interval: '@once'
+  start_date: 2020-12-05 10:57:53.116772

@@ -27,6 +27,15 @@ services:
         - 80
       networks:
         - meltano
+  metabase:
+    container_name: metabase
+    image: metabase/metabase
+    ports:
+        - "8000:3000"
+    expose:
+        - 8000
+    networks:
+        - meltano
   meltano-ui:
     container_name: meltano_ui
     build:
@@ -45,6 +54,7 @@ services:
       - 5000:5000
     depends_on:
       - meltano-system-db
+      - google_play_api
     networks:
       - meltano
     restart: unless-stopped
@@ -65,6 +75,8 @@ services:
 
 networks:
   meltano:
+    driver: bridge
+
 
 volumes:
   meltano_postgresql_data:

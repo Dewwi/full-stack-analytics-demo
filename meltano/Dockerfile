@@ -20,6 +20,9 @@ ENV MELTANO_PROJECT_READONLY 1
 # Copy over remaining project files
 COPY . .
 
+RUN meltano install tap-google-play
+RUN meltano install target-postgres
+
 # Expose default port used by `meltano ui`
 EXPOSE 5000
 
